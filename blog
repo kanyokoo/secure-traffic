@@ -1,0 +1,52 @@
+You can find the complete blog(with pictures) on my medium profile:
+
+
+
+
+
+
+SECURE TRAFFIC
+Web-security has become a major concern in the fast-evolving digital world we are living in. Our life is increasingly shifting to web-based platforms.This means that we are accessing the web-browsers now more than ever. Servers are being deployed and set up everyday. We need to be more vigilant than ever on what type of communication we are using with these browsers and servers. This is why understanding secure web traffic is no longer optional - it's essential. There are two fundamental protocols that really shape the experience of web-based platforms.I will dive deep into these protocols in this blog: HTTP (Hypertext Transfer Protocol) and HTTPS (Hypertext Transfer Protocol Secure). By the end you will surely understand why secure communication is the backbone of a safer internet that we surely need.
+It is clearly noteworthy that HTTPS is the secure mode of HTTP traffic. I will clearly show you how and why it is really important you strictly use HTTPS traffic rather than HTTP. 
+I won't be testing out or trying out other developers' server but I opted to use my own setup server in my local-host. I used flask(python) for the server. The whole idea is to have a student portal login where students get to register for units, download learning resources and such. So students will surely have an account which has some of username, they authenticate with their password and an email address is also added when registering a student account.
+So there is a server, database and the website. The server (flask) controls the operations, the database that stores the information of users like usernames and passwords. Then the website where the students interact with the server from.
+The same concept was now done in two similar setups. Since i am to compare the HTTPS traffic with the HTTP traffic, I have one server that has the normal HTTP protocol configurations while the other server has some more elements in the code to set up the secure protocol. The secure protocol I am referring to is literally encryption of the data traffic being sent through the server.
+HTTP
+I will start by the insecure server communication. The flask code is just normal code, i wont dig deep in what it does but it runs on port 5500 on my local machine, same as the website. The website was just coded for the concept, no CSS is used for the webpage to look appealing.
+The server just has simple authentication process for students to use for login, registration and some dashboard page where they conduct their business.
+The sever also has some database initialization by creating SQLite database where there is creation of students table that will now store the details; username, password and email.
+The server now controls all the functions of the website, including the Home page, the login(authenticating users), displaying the dashboard, logout of students from their account, and the registration of students then storing their credentials in the database that wil be used for their authentication.
+
+
+Lets now move to the testing out our server and checking to capture traffic and expose how the protocol HTTP is very insecure. I will be using wire-shark tool to capture traffic and simulate how attackers get access to your credentials and data if you use unencrypted data communication. 
+I start by making the website go live;
+website login page.Then start the server. I use the command: python .\studentportal.py
+server being deployed.Then students can now interact with the website freely. Before I start the registering of students or any other operations; I start up my wire-shark tool to capture the communication between the website and the server. Since i am running everything(server and website) on my local machine; i use the adapter for loopback traffic capture to do the capturing of data. This tool might also be used by attackers. An example is when they are running a Rogue Access Point network(their own WiFi) and let the victim use it, being a Man-in-the-middle attack.
+the network type to be captured: loopbackOnce that is ready, you will notice more and more traffic is being captured. Lets go back to our website and our server. Since we have no account, we register. I use the credentials; beast as the username and tycoon as the password. I added beast@2025 as the email. Let me take you step by step on how these credentials will be captured.
+I use the same credentials to login and i am authorized to access the dashboard. From the server side, we can see it shows the traffic flow from and into it. Some with GET method and some with POST method.
+server showing its activities.I head back to the wire-shark tool that has been capturing traffic for me, make it stop capturing traffic since we are done and want to investigate the traffic we have dealt with. One thing about wire-shark is that we need to know how to filter traffic since so much packets are capture. Like in my scenario, I have 3911 packets which we have only captured in a matter of less than three minutes while we registered and logged in the user "beast".
+Therefore I use the filter command; tcp.port ==5500.
+after filteringAfter filtering, we could now interact with 126 packets which at-least reduces the burden, viewing the contents of each group of the packets I interact with one packet that really proves everything.
+packet showing the credentials.This now shows how bad it is to use HTTP traffic since when intercepted, the data is just accessed directly since it is in plain text(Not encrypted). And just like that, attackers are able to access very important details and credentials.
+HTTPS
+HTTPS now brings the feature of encryption, data sent through HTTPS protocol is encrypted whereby the receiver must have some decryption key to be able to decrypt the data they have received. This makes sure that even if there is any leek or attack on the communication part, the attackers are not able to read or have exactly the information being transported. 
+This HTTPS server works literally almost the same as the HTTP server; only that here there are few new features. There is the certificate and key that are used to keep the secure.
+The HTTPS server uses TLS/SSL which is the mechanism that encrypts data. The ssl_context requires two files: certificate file and a private key file. You can see these features in the image below.
+the main code part that makes https secure.One thing to understand about the security part of the HTTPS, the SSL and TLS features are what makes the encryption and authentication. With that maintained, data-integrity will always be top-class.
+Encryption: SSL/TLS encrypts data between the browser(client) and the server preventing any eavesdropping by attackers.
+Authentication: the server has to present an SSL certificate that needs to be verified by a Certificate Authority(CA). This is just a confirmation that the client is communicating with a legitimate and the intended server.
+We now start looking into the working of the server and the website. I deploy the website and the server respectively. I then visit https://127.0.0.1:5500.
+Remember what I have talked about the verification and and issuing of the certificate by a trusted certificate authority. For our server scenario, I have used a self-signed certificate and therefore my browser will literally have some warning since it can tell the certificate is not from a well known and trusted Certificate Authority. For reasons that the server is for local development only i will allow my browser to work with that certificate.
+warning by our browserTo proceed; click Advanced and then "proceed to 127.0.0.1". This will surely tell you browser to accept the risks and let you access the website.
+Then proceed to use the website as normal. Register a new student to have their details in the database and be able to use them for authentication purposes.
+Before I register I start my wire-shark, have it capture the loop-back address and proceed with the operations.
+I use paps as the username, paps as the password and paps2025@gmail.com as the email address for the registration.I then use the same same credentials to log in. It authenticates me and i am in.
+dashboardI then head back to wire-shark, make the tool stop capturing data traffic and then start to analyze the captured data. Upon checking the packets, one cannot even be sure which one was use for registering, or for authenticating logins. An attacker will surely be met with such data and this literally cant be of much help to them since they don't have the decryption key. An example of the captured data is with the following snip.
+data packetIt is evident that HTTPS does not transport data in plain text and is very secure.
+Key differences between HTTP and HTTPS
+Differences btn HTTP and HTTPSIt is now evident that security is not for leisure but a necessity. Most humans now use the web and it should be their top priority to make sure they are using secure traffic like that of the HTTPS.
+More benefits that come with the encryption in HTTPS are
+Faster performance: the HTTPS supports HTTP/2 which enable multiplexing, header compression and resource prioritization.
+Building user trust and credibility: users are more likely to share sensitive information and data on a secure traffic.
+Supports online payments and sensitive information: with the matter being about money or online payment, users should not even risk using HTTP traffic, one should really use HTTPS for all those kinds of transaction to make sure they don't expose important information like they bank pins.
+Improved SEO ranking: google prioritizes HTTPS websites in search engines traffic. Non-HTTPS traffic may even get flagged as "not secure" making it have lower visitor trust.
