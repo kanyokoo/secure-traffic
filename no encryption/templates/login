@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Portal Login</title>
+</head>
+<body>
+    <h1>PACKERS INTERNATIONAL COLLEGE</h1>
+    <h2>Student Portal Login</h2>
+    <p>We welcome you to the students portal, you are supposed to login with your credentials and if you have no account with us, click the register part and register for an account.</p>
+    <form action="/login" method="post">
+        <label>Username:</label>
+        <input type="text" name="username" required><br>
+        <label>Password:</label>
+        <input type="password" name="password" required><br>
+        <button type="submit">Login</button>
+    </form>
+    <p>If no account: <a href="/register">Register here</a></p>
+</body>
+</html>
